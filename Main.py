@@ -93,13 +93,7 @@ class DataAnalysisApp:
         info_frame = ttk.LabelFrame(self.data_tab, text="Data Information", padding=10)
         info_frame.pack(fill=tk.X, padx=10, pady=10)
         
-        # self.info_text = tk.Text(info_frame, height=10, wrap=tk.WORD)
-        # self.info_text.pack(fill=tk.BOTH, expand=True)
-        
-        # info_scroll = ttk.Scrollbar(self.info_text, command=self.info_text.yview)
-        # info_scroll.pack(side=tk.RIGHT, fill=tk.Y)
-        # self.info_text.config(yscrollcommand=info_scroll.set)
-        # self.info_text.config(state=tk.DISABLED)
+
     
     def setup_missing_tab(self):
         # Main horizontal split frame
@@ -202,12 +196,6 @@ class DataAnalysisApp:
         self.target_viz_dropdown = ttk.Combobox(selection_frame, textvariable=self.target_viz_var, state="readonly")
         self.target_viz_dropdown.grid(row=0, column=1, padx=5, pady=5)
         
-        # Plot type
-        # ttk.Label(selection_frame, text="Plot Type:").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
-        # self.target_plot_type = tk.StringVar(value="histogram")
-        # plot_type_combo = ttk.Combobox(selection_frame, textvariable=self.target_plot_type, 
-        #                             values=["histogram"], state="readonly")
-        # plot_type_combo.grid(row=1, column=1, padx=5, pady=5)
         self.target_plot_type = tk.StringVar(value="histogram")  # Only used internally
         
         # Plot button
@@ -243,31 +231,6 @@ class DataAnalysisApp:
         self.corr_plot_frame = ttk.Frame(self.corr_viz_tab)
         self.corr_plot_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
     
-    # def setup_dist_viz_tab(self):
-    #     # Controls frame
-    #     controls_frame = ttk.Frame(self.dist_viz_tab)
-    #     controls_frame.pack(fill=tk.X, padx=10, pady=10)
-        
-    #     # Feature selection
-    #     ttk.Label(controls_frame, text="Select Feature:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
-    #     self.dist_feature_var = tk.StringVar()
-    #     self.dist_feature_dropdown = ttk.Combobox(controls_frame, textvariable=self.dist_feature_var, state="readonly")
-    #     self.dist_feature_dropdown.grid(row=0, column=1, padx=5, pady=5)
-        
-    #     # Plot type
-    #     ttk.Label(controls_frame, text="Plot Type:").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
-    #     self.dist_plot_type = tk.StringVar(value="histogram")
-    #     dist_plot_combo = ttk.Combobox(controls_frame, textvariable=self.dist_plot_type, 
-    #                                   values=["histogram", "kde", "boxplot", "violin"], state="readonly")
-    #     dist_plot_combo.grid(row=1, column=1, padx=5, pady=5)
-        
-    #     # Plot button
-    #     ttk.Button(controls_frame, text="Generate Distribution Plot", 
-    #               command=self.plot_distribution).grid(row=2, column=0, columnspan=2, pady=10)
-        
-    #     # Plot frame
-    #     self.dist_plot_frame = ttk.Frame(self.dist_viz_tab)
-    #     self.dist_plot_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
     
     def setup_preprocessing_tab(self):
         # Create notebook for preprocessing options
@@ -710,10 +673,6 @@ class DataAnalysisApp:
         if self.numerical_columns:
             self.corr_target_dropdown.current(0)
         
-        # Update distribution feature dropdown
-        # self.dist_feature_dropdown["values"] = self.columns
-        # if self.columns:
-        #     self.dist_feature_dropdown.current(0)
     
     def update_preprocessing_tabs(self):
         # Update dummy variables tab
@@ -871,13 +830,6 @@ class DataAnalysisApp:
             if plot_type == "histogram":
                 sns.histplot(data=self.processed_data, x=target, kde=True, ax=ax)
                 ax.set_title(f'Distribution of {target}')
-            # elif plot_type == "boxplot":
-            #     sns.boxplot(data=self.processed_data, y=target, ax=ax)
-            #     ax.set_title(f'Boxplot of {target}')
-            # elif plot_type == "violin":
-            #     sns.violinplot(data=self.processed_data, y=target, ax=ax)
-            #     ax.set_title(f'Violin Plot of {target}')
-            
             # Display plot
             canvas = FigureCanvasTkAgg(fig, master=self.target_plot_frame)
             canvas.draw()
@@ -933,53 +885,7 @@ class DataAnalysisApp:
         except Exception as e:
             messagebox.showerror("Error", f"Failed to plot correlation: {str(e)}")
     
-    # def plot_distribution(self):
-    #     if self.data is None:
-    #         messagebox.showwarning("Warning", "No data loaded.")
-    #         return
-        
-    #     feature = self.dist_feature_var.get()
-    #     plot_type = self.dist_plot_type.get()
-        
-    #     if not feature:
-    #         messagebox.showwarning("Warning", "Please select a feature.")
-    #         return
-        
-    #     try:
-    #         # Clear previous plot
-    #         for widget in self.dist_plot_frame.winfo_children():
-    #             widget.destroy()
-            
-    #         # Create figure
-    #         fig, ax = plt.subplots(figsize=(10, 6))
-            
-    #         # Plot based on selected type and feature type
-    #         if pd.api.types.is_numeric_dtype(self.processed_data[feature]):
-    #             if plot_type == "histogram":
-    #                 sns.histplot(data=self.processed_data, x=feature, kde=True, ax=ax)
-    #                 ax.set_title(f'Distribution of {feature}')
-    #             elif plot_type == "kde":
-    #                 sns.kdeplot(data=self.processed_data, x=feature, ax=ax)
-    #                 ax.set_title(f'KDE Plot of {feature}')
-    #             elif plot_type == "boxplot":
-    #                 sns.boxplot(data=self.processed_data, y=feature, ax=ax)
-    #                 ax.set_title(f'Boxplot of {feature}')
-    #             elif plot_type == "violin":
-    #                 sns.violinplot(data=self.processed_data, y=feature, ax=ax)
-    #                 ax.set_title(f'Violin Plot of {feature}')
-    #         else:
-    #             # For categorical features
-    #             sns.countplot(data=self.processed_data, x=feature, ax=ax)
-    #             ax.set_title(f'Count Plot of {feature}')
-    #             ax.tick_params(axis='x', rotation=45)
-            
-    #         # Display plot
-    #         canvas = FigureCanvasTkAgg(fig, master=self.dist_plot_frame)
-    #         canvas.draw()
-    #         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
-            
-    #     except Exception as e:
-    #         messagebox.showerror("Error", f"Failed to plot distribution: {str(e)}")
+
     
     def apply_get_dummies(self):
         selected_columns = [col for col, var in self.dummy_vars.items() if var.get()]
