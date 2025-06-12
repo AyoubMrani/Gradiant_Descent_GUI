@@ -1,5 +1,7 @@
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
+import ttkbootstrap as tb
+from ttkbootstrap.constants import *
+from tkinter import filedialog, messagebox
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,10 +15,16 @@ isNormalized = False
 
 class DataAnalysisApp:
     def __init__(self, root):
+        
         self.root = root
         self.root.title("Data Analysis & Gradient Descent")
         self.root.geometry("1200x800")
         self.root.minsize(1000, 700)
+
+        style = tb.Style()
+        style.configure("TButton", padding=6)
+        style.configure("TNotebook.Tab", padding=(12, 8))
+        root.option_add("*Font", ("Segoe UI", 10))
 
         # Data variables
         self.data = None
@@ -27,20 +35,20 @@ class DataAnalysisApp:
         self.boolean_columns = []
 
         # Create main frame
-        self.main_frame = ttk.Frame(self.root, padding=10)
+        self.main_frame = tb.Frame(self.root, padding=10)
         self.main_frame.pack(fill=tk.BOTH, expand=True)
 
         # Create notebook for tabs
-        self.notebook = ttk.Notebook(self.main_frame)
+        self.notebook = tb.Notebook(self.main_frame)
         self.notebook.pack(fill=tk.BOTH, expand=True, pady=10)
 
         # Create tabs
-        self.data_tab = ttk.Frame(self.notebook)
-        self.data_info_tab = ttk.Frame(self.notebook)
-        self.missing_tab = ttk.Frame(self.notebook)
-        self.preprocessing_tab = ttk.Frame(self.notebook)
-        self.visualization_tab = ttk.Frame(self.notebook)
-        self.model_tab = ttk.Frame(self.notebook)
+        self.data_tab = tb.Frame(self.notebook)
+        self.data_info_tab = tb.Frame(self.notebook)
+        self.missing_tab = tb.Frame(self.notebook)
+        self.preprocessing_tab = tb.Frame(self.notebook)
+        self.visualization_tab = tb.Frame(self.notebook)
+        self.model_tab = tb.Frame(self.notebook)
 
         self.notebook.add(self.data_tab, text="Data Loading")
         self.notebook.add(self.data_info_tab, text="Data Information")
@@ -60,29 +68,29 @@ class DataAnalysisApp:
     
     def setup_data_tab(self):
         # File loading section
-        file_frame = ttk.LabelFrame(self.data_tab, text="Load Dataset", padding=10)
+        file_frame = tb.LabelFrame(self.data_tab, text="Load Dataset", padding=10)
         file_frame.pack(fill=tk.X, padx=10, pady=10)
         
-        ttk.Button(file_frame, text="Browse CSV File", command=self.load_csv).pack(pady=10)
+        tb.Button(file_frame, text="Browse CSV File", command=self.load_csv).pack(pady=10)
         
-        self.file_label = ttk.Label(file_frame, text="No file selected")
+        self.file_label = tb.Label(file_frame, text="No file selected")
         self.file_label.pack(pady=5)
         
         # Data preview section
-        preview_frame = ttk.LabelFrame(self.data_tab, text="Data Preview", padding=10)
+        preview_frame = tb.LabelFrame(self.data_tab, text="Data Preview", padding=10)
         preview_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         # Create treeview for data preview
-        self.tree_frame = ttk.Frame(preview_frame)
+        self.tree_frame = tb.Frame(preview_frame)
         self.tree_frame.pack(fill=tk.BOTH, expand=True)
         
-        self.tree_scroll_y = ttk.Scrollbar(self.tree_frame)
+        self.tree_scroll_y = tb.Scrollbar(self.tree_frame)
         self.tree_scroll_y.pack(side=tk.RIGHT, fill=tk.Y)
         
-        self.tree_scroll_x = ttk.Scrollbar(self.tree_frame, orient=tk.HORIZONTAL)
+        self.tree_scroll_x = tb.Scrollbar(self.tree_frame, orient=tk.HORIZONTAL)
         self.tree_scroll_x.pack(side=tk.BOTTOM, fill=tk.X)
         
-        self.tree = ttk.Treeview(self.tree_frame, yscrollcommand=self.tree_scroll_y.set, 
+        self.tree = tb.Treeview(self.tree_frame, yscrollcommand=self.tree_scroll_y.set, 
                                 xscrollcommand=self.tree_scroll_x.set)
         self.tree.pack(fill=tk.BOTH, expand=True)
         
@@ -90,71 +98,71 @@ class DataAnalysisApp:
         self.tree_scroll_x.config(command=self.tree.xview)
         
         # Data info section
-        info_frame = ttk.LabelFrame(self.data_tab, text="Data Information", padding=10)
+        info_frame = tb.LabelFrame(self.data_tab, text="Data Information", padding=10)
         info_frame.pack(fill=tk.X, padx=10, pady=10)
         
 
     
     def setup_missing_tab(self):
         # Main horizontal split frame
-        main_frame = ttk.Frame(self.missing_tab)
+        main_frame = tb.Frame(self.missing_tab)
         main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         # Left frame for summary and by column
-        left_frame = ttk.Frame(main_frame)
+        left_frame = tb.Frame(main_frame)
         left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
 
         # Right frame for handling and visualization
-        right_frame = ttk.Frame(main_frame)
+        right_frame = tb.Frame(main_frame)
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=(5, 0))
 
         # --- Left: Missing values summary ---
-        summary_frame = ttk.LabelFrame(left_frame, text="Missing Values Summary", padding=10)
+        summary_frame = tb.LabelFrame(left_frame, text="Missing Values Summary", padding=10)
         summary_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(5, 2))
 
-        summary_container = ttk.Frame(summary_frame)
+        summary_container = tb.Frame(summary_frame)
         summary_container.pack(fill=tk.BOTH, expand=True)
         self.missing_summary_text = tk.Text(summary_container, height=10, wrap=tk.WORD)
         self.missing_summary_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        summary_scroll = ttk.Scrollbar(summary_container, command=self.missing_summary_text.yview)
+        summary_scroll = tb.Scrollbar(summary_container, command=self.missing_summary_text.yview)
         summary_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         self.missing_summary_text.config(yscrollcommand=summary_scroll.set)
         self.missing_summary_text.config(state=tk.DISABLED)
 
         # --- Left: Missing values by column ---
-        columns_frame = ttk.LabelFrame(left_frame, text="Missing Values by Column", padding=10)
+        columns_frame = tb.LabelFrame(left_frame, text="Missing Values by Column", padding=10)
         columns_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=(2, 5))
 
-        columns_container = ttk.Frame(columns_frame)
+        columns_container = tb.Frame(columns_frame)
         columns_container.pack(fill=tk.BOTH, expand=True)
         self.missing_columns_text = tk.Text(columns_container, height=15, wrap=tk.WORD)
         self.missing_columns_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        columns_scroll = ttk.Scrollbar(columns_container, command=self.missing_columns_text.yview)
+        columns_scroll = tb.Scrollbar(columns_container, command=self.missing_columns_text.yview)
         columns_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         self.missing_columns_text.config(yscrollcommand=columns_scroll.set)
         self.missing_columns_text.config(state=tk.DISABLED)
 
         # --- Right: Handle missing values ---
-        handling_frame = ttk.LabelFrame(right_frame, text="Handle Missing Values", padding=10)
+        handling_frame = tb.LabelFrame(right_frame, text="Handle Missing Values", padding=10)
         handling_frame.pack(fill=tk.BOTH, expand=False, padx=5, pady=(5, 2))
 
-        strategy_frame = ttk.Frame(handling_frame)
+        strategy_frame = tb.Frame(handling_frame)
         strategy_frame.pack(fill=tk.X, pady=10)
-        ttk.Label(strategy_frame, text="Strategy:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(strategy_frame, text="Strategy:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
         self.strategy_var = tk.StringVar(value="mean")
-        strategy_combo = ttk.Combobox(strategy_frame, textvariable=self.strategy_var, 
+        strategy_combo = tb.Combobox(strategy_frame, textvariable=self.strategy_var, 
                             values=["mean", "constant", "most frequent", "drop"], state="readonly")
         strategy_combo.grid(row=0, column=1, padx=5, pady=5)
-        ttk.Label(strategy_frame, text="Fill Value (for constant):").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(strategy_frame, text="Fill Value (for constant):").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
         self.fill_value_var = tk.StringVar(value="0")
-        ttk.Entry(strategy_frame, textvariable=self.fill_value_var).grid(row=1, column=1, padx=5, pady=5)
+        tb.Entry(strategy_frame, textvariable=self.fill_value_var).grid(row=1, column=1, padx=5, pady=5)
 
-        columns_selection_frame = ttk.Frame(handling_frame)
+        columns_selection_frame = tb.Frame(handling_frame)
         columns_selection_frame.pack(fill=tk.BOTH, expand=True, pady=10)
-        ttk.Label(columns_selection_frame, text="Select columns to handle:").pack(anchor=tk.W)
+        tb.Label(columns_selection_frame, text="Select columns to handle:").pack(anchor=tk.W)
         self.columns_canvas = tk.Canvas(columns_selection_frame)
-        scrollbar = ttk.Scrollbar(columns_selection_frame, orient=tk.VERTICAL, command=self.columns_canvas.yview)
-        self.columns_scrollable_frame = ttk.Frame(self.columns_canvas)
+        scrollbar = tb.Scrollbar(columns_selection_frame, orient=tk.VERTICAL, command=self.columns_canvas.yview)
+        self.columns_scrollable_frame = tb.Frame(self.columns_canvas)
         self.columns_scrollable_frame.bind(
             "<Configure>",
             lambda e: self.columns_canvas.configure(scrollregion=self.columns_canvas.bbox("all"))
@@ -163,19 +171,19 @@ class DataAnalysisApp:
         self.columns_canvas.configure(yscrollcommand=scrollbar.set)
         self.columns_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-        ttk.Button(handling_frame, text="Apply", command=self.handle_missing_values).pack(pady=10)
+        tb.Button(handling_frame, text="Apply", command=self.handle_missing_values).pack(pady=10)
 
         
     #ayoub
     def setup_visualization_tab(self):
         # Create notebook for visualization options
-        self.viz_notebook = ttk.Notebook(self.visualization_tab)
+        self.viz_notebook = tb.Notebook(self.visualization_tab)
         self.viz_notebook.pack(fill=tk.BOTH, expand=True, pady=10)
         
         # Create visualization sub-tabs
-        self.target_viz_tab = ttk.Frame(self.viz_notebook)
-        self.corr_viz_tab = ttk.Frame(self.viz_notebook)
-        # self.dist_viz_tab = ttk.Frame(self.viz_notebook)
+        self.target_viz_tab = tb.Frame(self.viz_notebook)
+        self.corr_viz_tab = tb.Frame(self.viz_notebook)
+        # self.dist_viz_tab = tb.Frame(self.viz_notebook)
         
         self.viz_notebook.add(self.target_viz_tab, text="Histogram Distribution")
         self.viz_notebook.add(self.corr_viz_tab, text="Correlation Analysis")
@@ -188,60 +196,60 @@ class DataAnalysisApp:
     
     def setup_target_viz_tab(self):
         # Target selection
-        selection_frame = ttk.Frame(self.target_viz_tab)
+        selection_frame = tb.Frame(self.target_viz_tab)
         selection_frame.pack(fill=tk.X, padx=10, pady=10)
         
-        ttk.Label(selection_frame, text="Select Target Variable:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(selection_frame, text="Select Target Variable:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
         self.target_viz_var = tk.StringVar()
-        self.target_viz_dropdown = ttk.Combobox(selection_frame, textvariable=self.target_viz_var, state="readonly")
+        self.target_viz_dropdown = tb.Combobox(selection_frame, textvariable=self.target_viz_var, state="readonly")
         self.target_viz_dropdown.grid(row=0, column=1, padx=5, pady=5)
         
         self.target_plot_type = tk.StringVar(value="histogram")  # Only used internally
         
         # Plot button
-        ttk.Button(selection_frame, text="Generate Plot", command=self.plot_target).grid(row=2, column=0, columnspan=2, pady=10)
+        tb.Button(selection_frame, text="Generate Plot", command=self.plot_target).grid(row=2, column=0, columnspan=2, pady=10)
         
         # Plot frame
-        self.target_plot_frame = ttk.Frame(self.target_viz_tab)
+        self.target_plot_frame = tb.Frame(self.target_viz_tab)
         self.target_plot_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
     
     def setup_corr_viz_tab(self):
         # Controls frame
-        controls_frame = ttk.Frame(self.corr_viz_tab)
+        controls_frame = tb.Frame(self.corr_viz_tab)
         controls_frame.pack(fill=tk.X, padx=10, pady=10)
         
         # Target selection for correlation
-        ttk.Label(controls_frame, text="Select Target for Correlation:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(controls_frame, text="Select Target for Correlation:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
         self.corr_target_var = tk.StringVar()
-        self.corr_target_dropdown = ttk.Combobox(controls_frame, textvariable=self.corr_target_var, state="readonly")
+        self.corr_target_dropdown = tb.Combobox(controls_frame, textvariable=self.corr_target_var, state="readonly")
         self.corr_target_dropdown.grid(row=0, column=1, padx=5, pady=5)
         
         # Plot type
-        ttk.Label(controls_frame, text="Plot Type:").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(controls_frame, text="Plot Type:").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
         self.corr_plot_type = tk.StringVar(value="heatmap")
-        corr_plot_combo = ttk.Combobox(controls_frame, textvariable=self.corr_plot_type, 
+        corr_plot_combo = tb.Combobox(controls_frame, textvariable=self.corr_plot_type, 
                                       values=["heatmap", "bar"], state="readonly")
         corr_plot_combo.grid(row=1, column=1, padx=5, pady=5)
         
         # Plot button
-        ttk.Button(controls_frame, text="Generate Correlation Plot", 
+        tb.Button(controls_frame, text="Generate Correlation Plot", 
                   command=self.plot_correlation).grid(row=2, column=0, columnspan=2, pady=10)
         
         # Plot frame
-        self.corr_plot_frame = ttk.Frame(self.corr_viz_tab)
+        self.corr_plot_frame = tb.Frame(self.corr_viz_tab)
         self.corr_plot_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
     
     
     def setup_preprocessing_tab(self):
         # Create notebook for preprocessing options
-        self.preprocessing_notebook = ttk.Notebook(self.preprocessing_tab)
+        self.preprocessing_notebook = tb.Notebook(self.preprocessing_tab)
         self.preprocessing_notebook.pack(fill=tk.BOTH, expand=True, pady=10)
         
         # Create preprocessing sub-tabs
-        self.dummies_tab = ttk.Frame(self.preprocessing_notebook)
-        self.mapping_tab = ttk.Frame(self.preprocessing_notebook)
-        self.normalize_tab = ttk.Frame(self.preprocessing_notebook)
-        self.boolean_tab = ttk.Frame(self.preprocessing_notebook)
+        self.dummies_tab = tb.Frame(self.preprocessing_notebook)
+        self.mapping_tab = tb.Frame(self.preprocessing_notebook)
+        self.normalize_tab = tb.Frame(self.preprocessing_notebook)
+        self.boolean_tab = tb.Frame(self.preprocessing_notebook)
         
         self.preprocessing_notebook.add(self.dummies_tab, text="Dummy Variables")
         self.preprocessing_notebook.add(self.mapping_tab, text="Yes/No Mapping")
@@ -255,21 +263,21 @@ class DataAnalysisApp:
         self.setup_boolean_tab()
     
     def setup_dummies_tab(self):
-        ttk.Label(self.dummies_tab, text="Create dummy variables from categorical columns").pack(pady=10)
+        tb.Label(self.dummies_tab, text="Create dummy variables from categorical columns").pack(pady=10)
         
         # Drop first option
         self.drop_first_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(self.dummies_tab, text="Drop first category (recommended to avoid multicollinearity)", 
+        tb.Checkbutton(self.dummies_tab, text="Drop first category (recommended to avoid multicollinearity)", 
                        variable=self.drop_first_var).pack(pady=5, anchor=tk.W)
         
         # Categorical columns frame
-        columns_frame = ttk.LabelFrame(self.dummies_tab, text="Select categorical columns")
+        columns_frame = tb.LabelFrame(self.dummies_tab, text="Select categorical columns")
         columns_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         # Scrollable frame for columns
         self.dummies_canvas = tk.Canvas(columns_frame)
-        scrollbar = ttk.Scrollbar(columns_frame, orient=tk.VERTICAL, command=self.dummies_canvas.yview)
-        self.dummies_scrollable_frame = ttk.Frame(self.dummies_canvas)
+        scrollbar = tb.Scrollbar(columns_frame, orient=tk.VERTICAL, command=self.dummies_canvas.yview)
+        self.dummies_scrollable_frame = tb.Frame(self.dummies_canvas)
         
         self.dummies_scrollable_frame.bind(
             "<Configure>",
@@ -283,31 +291,31 @@ class DataAnalysisApp:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         # Apply button
-        ttk.Button(self.dummies_tab, text="Apply Get Dummies", command=self.apply_get_dummies).pack(pady=10)
+        tb.Button(self.dummies_tab, text="Apply Get Dummies", command=self.apply_get_dummies).pack(pady=10)
     
     def setup_mapping_tab(self):
-        ttk.Label(self.mapping_tab, text="Map categorical values (e.g., 'yes'/'no') to 1/0").pack(pady=10)
+        tb.Label(self.mapping_tab, text="Map categorical values (e.g., 'yes'/'no') to 1/0").pack(pady=10)
         
         # Mapping values
-        mapping_values_frame = ttk.Frame(self.mapping_tab)
+        mapping_values_frame = tb.Frame(self.mapping_tab)
         mapping_values_frame.pack(fill=tk.X, padx=10, pady=10)
         
-        ttk.Label(mapping_values_frame, text="Value for 'Yes':").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(mapping_values_frame, text="Value for 'Yes':").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
         self.yes_value = tk.StringVar(value="yes")
-        ttk.Entry(mapping_values_frame, textvariable=self.yes_value).grid(row=0, column=1, padx=5, pady=5)
+        tb.Entry(mapping_values_frame, textvariable=self.yes_value).grid(row=0, column=1, padx=5, pady=5)
         
-        ttk.Label(mapping_values_frame, text="Value for 'No':").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(mapping_values_frame, text="Value for 'No':").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
         self.no_value = tk.StringVar(value="no")
-        ttk.Entry(mapping_values_frame, textvariable=self.no_value).grid(row=1, column=1, padx=5, pady=5)
+        tb.Entry(mapping_values_frame, textvariable=self.no_value).grid(row=1, column=1, padx=5, pady=5)
         
         # Categorical columns frame
-        columns_frame = ttk.LabelFrame(self.mapping_tab, text="Select columns to map")
+        columns_frame = tb.LabelFrame(self.mapping_tab, text="Select columns to map")
         columns_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         # Scrollable frame for columns
         self.mapping_canvas = tk.Canvas(columns_frame)
-        scrollbar = ttk.Scrollbar(columns_frame, orient=tk.VERTICAL, command=self.mapping_canvas.yview)
-        self.mapping_scrollable_frame = ttk.Frame(self.mapping_canvas)
+        scrollbar = tb.Scrollbar(columns_frame, orient=tk.VERTICAL, command=self.mapping_canvas.yview)
+        self.mapping_scrollable_frame = tb.Frame(self.mapping_canvas)
         
         self.mapping_scrollable_frame.bind(
             "<Configure>",
@@ -321,19 +329,19 @@ class DataAnalysisApp:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         # Apply button
-        ttk.Button(self.mapping_tab, text="Apply Mapping", command=self.apply_mapping).pack(pady=10)
+        tb.Button(self.mapping_tab, text="Apply Mapping", command=self.apply_mapping).pack(pady=10)
     
     def setup_normalize_tab(self):
-        ttk.Label(self.normalize_tab, text="Normalize numerical features to range [0, 1]").pack(pady=10)
+        tb.Label(self.normalize_tab, text="Normalize numerical features to range [0, 1]").pack(pady=10)
         
         # Numerical columns frame
-        columns_frame = ttk.LabelFrame(self.normalize_tab, text="Select columns to normalize")
+        columns_frame = tb.LabelFrame(self.normalize_tab, text="Select columns to normalize")
         columns_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         # Scrollable frame for columns
         self.normalize_canvas = tk.Canvas(columns_frame)
-        scrollbar = ttk.Scrollbar(columns_frame, orient=tk.VERTICAL, command=self.normalize_canvas.yview)
-        self.normalize_scrollable_frame = ttk.Frame(self.normalize_canvas)
+        scrollbar = tb.Scrollbar(columns_frame, orient=tk.VERTICAL, command=self.normalize_canvas.yview)
+        self.normalize_scrollable_frame = tb.Frame(self.normalize_canvas)
         
         self.normalize_scrollable_frame.bind(
             "<Configure>",
@@ -347,19 +355,19 @@ class DataAnalysisApp:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         # Apply button
-        ttk.Button(self.normalize_tab, text="Apply Normalization", command=self.apply_normalization).pack(pady=10)
+        tb.Button(self.normalize_tab, text="Apply Normalization", command=self.apply_normalization).pack(pady=10)
     
     def setup_boolean_tab(self):
-        ttk.Label(self.boolean_tab, text="Convert boolean columns to integers (True=1, False=0)").pack(pady=10)
+        tb.Label(self.boolean_tab, text="Convert boolean columns to integers (True=1, False=0)").pack(pady=10)
         
         # Boolean columns frame
-        columns_frame = ttk.LabelFrame(self.boolean_tab, text="Select boolean columns to convert")
+        columns_frame = tb.LabelFrame(self.boolean_tab, text="Select boolean columns to convert")
         columns_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
         # Scrollable frame for columns
         self.boolean_canvas = tk.Canvas(columns_frame)
-        scrollbar = ttk.Scrollbar(columns_frame, orient=tk.VERTICAL, command=self.boolean_canvas.yview)
-        self.boolean_scrollable_frame = ttk.Frame(self.boolean_canvas)
+        scrollbar = tb.Scrollbar(columns_frame, orient=tk.VERTICAL, command=self.boolean_canvas.yview)
+        self.boolean_scrollable_frame = tb.Frame(self.boolean_canvas)
         
         self.boolean_scrollable_frame.bind(
             "<Configure>",
@@ -373,25 +381,25 @@ class DataAnalysisApp:
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
         # Apply button
-        ttk.Button(self.boolean_tab, text="Convert to Integer", command=self.apply_boolean_conversion).pack(pady=10)
+        tb.Button(self.boolean_tab, text="Convert to Integer", command=self.apply_boolean_conversion).pack(pady=10)
     
     def setup_model_tab(self):
         # Split into left and right frames
-        model_frame = ttk.Frame(self.model_tab)
+        model_frame = tb.Frame(self.model_tab)
         model_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        left_frame = ttk.Frame(model_frame)
+        left_frame = tb.Frame(model_frame)
         left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5)
         
-        right_frame = ttk.Frame(model_frame)
+        right_frame = tb.Frame(model_frame)
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5)
         
         # Model configuration (left frame)
-        config_frame = ttk.LabelFrame(left_frame, text="Model Configuration")
+        config_frame = tb.LabelFrame(left_frame, text="Model Configuration")
         # Prediction type selection
-        ttk.Label(config_frame, text="Prediction Type:").pack(anchor=tk.W, padx=10, pady=5)
+        tb.Label(config_frame, text="Prediction Type:").pack(anchor=tk.W, padx=10, pady=5)
         self.prediction_type_var = tk.StringVar(value="Regression")
-        prediction_type_combo = ttk.Combobox(
+        prediction_type_combo = tb.Combobox(
             config_frame,
             textvariable=self.prediction_type_var,
             values=["Regression", "Classification"],
@@ -402,20 +410,20 @@ class DataAnalysisApp:
         config_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         
         # Target variable
-        ttk.Label(config_frame, text="Target Variable:").pack(anchor=tk.W, padx=10, pady=5)
+        tb.Label(config_frame, text="Target Variable:").pack(anchor=tk.W, padx=10, pady=5)
         self.target_var = tk.StringVar()
-        self.target_dropdown = ttk.Combobox(config_frame, textvariable=self.target_var, state="readonly")
+        self.target_dropdown = tb.Combobox(config_frame, textvariable=self.target_var, state="readonly")
         self.target_dropdown.pack(fill=tk.X, padx=10, pady=5)
         
         # Features
-        ttk.Label(config_frame, text="Features:").pack(anchor=tk.W, padx=10, pady=5)
+        tb.Label(config_frame, text="Features:").pack(anchor=tk.W, padx=10, pady=5)
         
-        features_frame = ttk.Frame(config_frame)
+        features_frame = tb.Frame(config_frame)
         features_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
         
         self.features_canvas = tk.Canvas(features_frame)
-        scrollbar = ttk.Scrollbar(features_frame, orient=tk.VERTICAL, command=self.features_canvas.yview)
-        self.features_scrollable_frame = ttk.Frame(self.features_canvas)
+        scrollbar = tb.Scrollbar(features_frame, orient=tk.VERTICAL, command=self.features_canvas.yview)
+        self.features_scrollable_frame = tb.Frame(self.features_canvas)
         
         self.features_scrollable_frame.bind(
             "<Configure>",
@@ -430,42 +438,42 @@ class DataAnalysisApp:
         
         # Add intercept
         self.add_intercept_var = tk.BooleanVar(value=True)
-        ttk.Checkbutton(config_frame, text="Add intercept (recommended)", 
+        tb.Checkbutton(config_frame, text="Add intercept (recommended)", 
                        variable=self.add_intercept_var).pack(anchor=tk.W, padx=10, pady=5)
         
         # Model parameters
-        params_frame = ttk.Frame(config_frame)
+        params_frame = tb.Frame(config_frame)
         params_frame.pack(fill=tk.X, padx=10, pady=5)
         
-        ttk.Label(params_frame, text="Test Size:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(params_frame, text="Test Size:").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
         self.test_size_var = tk.DoubleVar(value=0.2)
-        ttk.Spinbox(params_frame, from_=0.0, to=0.5, increment=0.05, 
+        tb.Spinbox(params_frame, from_=0.0, to=0.5, increment=0.05, 
                    textvariable=self.test_size_var, width=10).grid(row=0, column=1, padx=5, pady=5)
         
-        ttk.Label(params_frame, text="Learning Rate (α):").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(params_frame, text="Learning Rate (α):").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
         self.learning_rate_var = tk.DoubleVar(value=0.01)
-        ttk.Spinbox(params_frame, from_=0.0001, to=0.1, increment=0.001, 
+        tb.Spinbox(params_frame, from_=0.0001, to=0.1, increment=0.001, 
                    textvariable=self.learning_rate_var, width=10).grid(row=1, column=1, padx=5, pady=5)
         
-        ttk.Label(params_frame, text="Iterations:").grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(params_frame, text="Iterations:").grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
         self.iterations_var = tk.IntVar(value=1000)
-        ttk.Spinbox(params_frame, from_=100, to=10000, increment=100, 
+        tb.Spinbox(params_frame, from_=100, to=10000, increment=100, 
                    textvariable=self.iterations_var, width=10).grid(row=2, column=1, padx=5, pady=5)
         
         # Run button
-        ttk.Button(config_frame, text="Run Prediction", command=self.run_gradient_descent).pack(pady=10)
+        tb.Button(config_frame, text="Run Prediction", command=self.run_gradient_descent).pack(pady=10)
 
         
         # Results frame (right frame)
-        self.results_frame = ttk.LabelFrame(right_frame, text="Model Results")
+        self.results_frame = tb.LabelFrame(right_frame, text="Model Results")
         self.results_frame.pack(fill=tk.BOTH, expand=True, pady=10)
         # Scrollable prediction frame
-        self.predict_outer_frame = ttk.LabelFrame(right_frame, text="Make Prediction")
+        self.predict_outer_frame = tb.LabelFrame(right_frame, text="Make Prediction")
         self.predict_outer_frame.pack(fill=tk.BOTH, expand=True, pady=10)
 
         self.predict_canvas = tk.Canvas(self.predict_outer_frame)
-        self.predict_scrollbar = ttk.Scrollbar(self.predict_outer_frame, orient=tk.VERTICAL, command=self.predict_canvas.yview)
-        self.predict_inner_frame = ttk.Frame(self.predict_canvas)
+        self.predict_scrollbar = tb.Scrollbar(self.predict_outer_frame, orient=tk.VERTICAL, command=self.predict_canvas.yview)
+        self.predict_inner_frame = tb.Frame(self.predict_canvas)
 
         self.predict_inner_frame.bind(
             "<Configure>",
@@ -480,43 +488,43 @@ class DataAnalysisApp:
 
         
         # Initially hide results
-        ttk.Label(self.results_frame, text="Run the model to see results").pack(pady=20)
+        tb.Label(self.results_frame, text="Run the model to see results").pack(pady=20)
         
         # Placeholder for results
-        self.results_notebook = ttk.Notebook(self.results_frame)
+        self.results_notebook = tb.Notebook(self.results_frame)
         
         # Cost history tab
-        self.cost_tab = ttk.Frame(self.results_notebook)
+        self.cost_tab = tb.Frame(self.results_notebook)
         self.results_notebook.add(self.cost_tab, text="Cost History")
         
         # Coefficients tab
-        self.coef_tab = ttk.Frame(self.results_notebook)
+        self.coef_tab = tb.Frame(self.results_notebook)
         self.results_notebook.add(self.coef_tab, text="Coefficients")
         
         # Metrics tab
-        self.metrics_tab = ttk.Frame(self.results_notebook)
+        self.metrics_tab = tb.Frame(self.results_notebook)
         self.results_notebook.add(self.metrics_tab, text="Metrics")
 
         # Regression Fit tab
-        self.visualization_result_tab = ttk.Frame(self.results_notebook)
+        self.visualization_result_tab = tb.Frame(self.results_notebook)
         self.results_notebook.add(self.visualization_result_tab, text="Visualization")
 
 
     def setup_data_info_tab(self):
-        frame = ttk.Frame(self.data_info_tab)
+        frame = tb.Frame(self.data_info_tab)
         frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         # Dataset shape
-        self.shape_label = ttk.Label(frame, text="Dataset Shape: N/A", font=("Arial", 12, "bold"))
+        self.shape_label = tb.Label(frame, text="Dataset Shape: N/A", font=("Arial", 12, "bold"))
         self.shape_label.pack(anchor=tk.W, pady=(0, 10))
 
         # Data types section
-        ttk.Label(frame, text="Column Data Types:", font=("Arial", 10, "bold")).pack(anchor=tk.W)
-        self.dtype_frame = ttk.Frame(frame)
+        tb.Label(frame, text="Column Data Types:", font=("Arial", 10, "bold")).pack(anchor=tk.W)
+        self.dtype_frame = tb.Frame(frame)
         self.dtype_frame.pack(fill=tk.BOTH, expand=False, pady=(0, 10))
 
         # Summary statistics section
-        ttk.Label(frame, text="Summary Statistics:", font=("Arial", 10, "bold")).pack(anchor=tk.W)
+        tb.Label(frame, text="Summary Statistics:", font=("Arial", 10, "bold")).pack(anchor=tk.W)
         self.summary_text = tk.Text(frame, height=12, wrap=tk.NONE)
         self.summary_text.pack(fill=tk.BOTH, expand=True)
         self.summary_text.config(state=tk.DISABLED)
@@ -587,7 +595,7 @@ class DataAnalysisApp:
             widget.destroy()
 
         for i, (col, dtype) in enumerate(self.data.dtypes.items()):
-            ttk.Label(self.dtype_frame, text=f"{col}: {dtype}").grid(row=i, column=0, sticky=tk.W)
+            tb.Label(self.dtype_frame, text=f"{col}: {dtype}").grid(row=i, column=0, sticky=tk.W)
 
         # Update summary statistics
         self.summary_text.config(state=tk.NORMAL)
@@ -655,7 +663,7 @@ class DataAnalysisApp:
         self.missing_vars = {}
         for i, col in enumerate(self.columns):
             var = tk.BooleanVar(value=col in columns_with_nulls)
-            cb = ttk.Checkbutton(self.columns_scrollable_frame, text=f"{col} ({null_by_column[col]} missing)", variable=var)
+            cb = tb.Checkbutton(self.columns_scrollable_frame, text=f"{col} ({null_by_column[col]} missing)", variable=var)
             cb.grid(row=i//2, column=i%2, sticky=tk.W, padx=10, pady=5)
             self.missing_vars[col] = var
     
@@ -682,7 +690,7 @@ class DataAnalysisApp:
         self.dummy_vars = {}
         for i, col in enumerate(self.categorical_columns):
             var = tk.BooleanVar()
-            cb = ttk.Checkbutton(self.dummies_scrollable_frame, text=col, variable=var)
+            cb = tb.Checkbutton(self.dummies_scrollable_frame, text=col, variable=var)
             cb.grid(row=i//2, column=i%2, sticky=tk.W, padx=10, pady=5)
             self.dummy_vars[col] = var
         
@@ -693,7 +701,7 @@ class DataAnalysisApp:
         self.mapping_vars = {}
         for i, col in enumerate(self.categorical_columns):
             var = tk.BooleanVar()
-            cb = ttk.Checkbutton(self.mapping_scrollable_frame, text=col, variable=var)
+            cb = tb.Checkbutton(self.mapping_scrollable_frame, text=col, variable=var)
             cb.grid(row=i//2, column=i%2, sticky=tk.W, padx=10, pady=5)
             self.mapping_vars[col] = var
         
@@ -704,7 +712,7 @@ class DataAnalysisApp:
         self.normalize_vars = {}
         for i, col in enumerate(self.numerical_columns):
             var = tk.BooleanVar(value=True)
-            cb = ttk.Checkbutton(self.normalize_scrollable_frame, text=col, variable=var)
+            cb = tb.Checkbutton(self.normalize_scrollable_frame, text=col, variable=var)
             cb.grid(row=i//2, column=i%2, sticky=tk.W, padx=10, pady=5)
             self.normalize_vars[col] = var
         
@@ -715,7 +723,7 @@ class DataAnalysisApp:
         self.boolean_vars = {}
         for i, col in enumerate(self.boolean_columns):
             var = tk.BooleanVar(value=True)
-            cb = ttk.Checkbutton(self.boolean_scrollable_frame, text=col, variable=var)
+            cb = tb.Checkbutton(self.boolean_scrollable_frame, text=col, variable=var)
             cb.grid(row=i//2, column=i%2, sticky=tk.W, padx=10, pady=5)
             self.boolean_vars[col] = var
     
@@ -732,7 +740,7 @@ class DataAnalysisApp:
         self.feature_vars = {}
         for i, col in enumerate(self.columns):
             var = tk.BooleanVar(value=True)
-            cb = ttk.Checkbutton(self.features_scrollable_frame, text=col, variable=var)
+            cb = tb.Checkbutton(self.features_scrollable_frame, text=col, variable=var)
             cb.grid(row=i//2, column=i%2, sticky=tk.W, padx=10, pady=5)
             self.feature_vars[col] = var
     
@@ -928,11 +936,34 @@ class DataAnalysisApp:
             no_value = self.no_value.get().strip().lower()
 
             for col in selected_columns:
-                self.processed_data[col] = self.processed_data[col].map(
-                    lambda x: 1 if yes_value and str(x).lower() == yes_value
-                    else 0 if no_value and str(x).lower() == no_value
-                    else x
-                )
+                # Get unique values in the column
+                unique_values = self.processed_data[col].dropna().unique()
+                
+                if not yes_value and not no_value:
+                    # If both fields are empty, map all unique values
+                    # First unique value becomes 1, all others become 0
+                    if len(unique_values) > 0:
+                        first_value = str(unique_values[0]).lower()
+                        self.processed_data[col] = self.processed_data[col].map(
+                            lambda x: 1 if str(x).lower() == first_value else 0
+                        )
+                elif not yes_value:
+                    # If only yes_value is empty, map all values except no_value to 1
+                    self.processed_data[col] = self.processed_data[col].map(
+                        lambda x: 0 if no_value and str(x).lower() == no_value else 1
+                    )
+                elif not no_value:
+                    # If only no_value is empty, map all values except yes_value to 0
+                    self.processed_data[col] = self.processed_data[col].map(
+                        lambda x: 1 if yes_value and str(x).lower() == yes_value else 0
+                    )
+                else:
+                    # Both values provided - original behavior
+                    self.processed_data[col] = self.processed_data[col].map(
+                        lambda x: 1 if yes_value and str(x).lower() == yes_value
+                        else 0 if no_value and str(x).lower() == no_value
+                        else x
+                    )
 
             # Update preview
             self.update_data_preview()
@@ -950,7 +981,6 @@ class DataAnalysisApp:
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to apply mapping: {str(e)}")
-
     def apply_normalization(self):
         global min_val, max_val, isNormalized
         isNormalized = True
@@ -1138,31 +1168,31 @@ class DataAnalysisApp:
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         
         # Display coefficients
-        coef_frame = ttk.Frame(self.coef_tab)
+        coef_frame = tb.Frame(self.coef_tab)
         coef_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        ttk.Label(coef_frame, text="Feature").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
-        ttk.Label(coef_frame, text="Coefficient").grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
+        tb.Label(coef_frame, text="Feature").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(coef_frame, text="Coefficient").grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
         
         for i, (feature, coef) in enumerate(zip(features, theta)):
-            ttk.Label(coef_frame, text=feature).grid(row=i+1, column=0, padx=5, pady=2, sticky=tk.W)
-            ttk.Label(coef_frame, text=f"{coef:.4f}").grid(row=i+1, column=1, padx=5, pady=2, sticky=tk.W)
+            tb.Label(coef_frame, text=feature).grid(row=i+1, column=0, padx=5, pady=2, sticky=tk.W)
+            tb.Label(coef_frame, text=f"{coef:.4f}").grid(row=i+1, column=1, padx=5, pady=2, sticky=tk.W)
         
         # Display metrics
-        metrics_frame = ttk.Frame(self.metrics_tab)
+        metrics_frame = tb.Frame(self.metrics_tab)
         metrics_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         
-        ttk.Label(metrics_frame, text="Metric").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
-        ttk.Label(metrics_frame, text="Training").grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
-        ttk.Label(metrics_frame, text="Testing").grid(row=0, column=2, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text="Metric").grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text="Training").grid(row=0, column=1, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text="Testing").grid(row=0, column=2, padx=5, pady=5, sticky=tk.W)
         
-        ttk.Label(metrics_frame, text="MSE").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
-        ttk.Label(metrics_frame, text=f"{train_mse:.4f}").grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
-        ttk.Label(metrics_frame, text=f"{test_mse:.4f}" if test_mse is not None else "N/A").grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text="MSE").grid(row=1, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text=f"{train_mse:.4f}").grid(row=1, column=1, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text=f"{test_mse:.4f}" if test_mse is not None else "N/A").grid(row=1, column=2, padx=5, pady=5, sticky=tk.W)
         
-        ttk.Label(metrics_frame, text="R²").grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
-        ttk.Label(metrics_frame, text=f"{train_r2:.4f}").grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
-        ttk.Label(metrics_frame, text=f"{test_r2:.4f}" if test_r2 is not None else "N/A").grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text="R²").grid(row=2, column=0, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text=f"{train_r2:.4f}").grid(row=2, column=1, padx=5, pady=5, sticky=tk.W)
+        tb.Label(metrics_frame, text=f"{test_r2:.4f}" if test_r2 is not None else "N/A").grid(row=2, column=2, padx=5, pady=5, sticky=tk.W)
 
     def create_prediction_inputs(self):
         for widget in self.predict_inner_frame.winfo_children():
@@ -1170,24 +1200,24 @@ class DataAnalysisApp:
 
         self.input_vars = {}
 
-        input_frame = ttk.Frame(self.predict_inner_frame)
+        input_frame = tb.Frame(self.predict_inner_frame)
         input_frame.pack(padx=10, pady=10, anchor=tk.W)
 
         row_index = 0
         for feature in self.trained_features:
             if feature == "intercept":
                 continue
-            ttk.Label(input_frame, text=feature).grid(row=row_index, column=0, sticky=tk.W, padx=5, pady=5)
+            tb.Label(input_frame, text=feature).grid(row=row_index, column=0, sticky=tk.W, padx=5, pady=5)
             var = tk.DoubleVar()
-            ttk.Entry(input_frame, textvariable=var).grid(row=row_index, column=1, padx=5, pady=5)
+            tb.Entry(input_frame, textvariable=var).grid(row=row_index, column=1, padx=5, pady=5)
             self.input_vars[feature] = var
             row_index += 1
 
-        ttk.Button(input_frame, text="Predict", command=self.predict_single_input).grid(
+        tb.Button(input_frame, text="Predict", command=self.predict_single_input).grid(
             row=row_index, column=0, columnspan=2, pady=10
         )
 
-        self.prediction_result_label = ttk.Label(input_frame, text="Prediction: N/A", font=("Arial", 12, "bold"))
+        self.prediction_result_label = tb.Label(input_frame, text="Prediction: N/A", font=("Arial", 12, "bold"))
         self.prediction_result_label.grid(row=row_index + 1, column=0, columnspan=2, pady=10)
 
     def predict_single_input(self):
@@ -1254,6 +1284,7 @@ class DataAnalysisApp:
         canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    root = tb.Window(themename="flatly")
+    root.option_add("*Font", ("Segoe UI", 10))  # 🌟 Amélioration visuelle ici  # Choix de thème ici
     app = DataAnalysisApp(root)
     root.mainloop()
